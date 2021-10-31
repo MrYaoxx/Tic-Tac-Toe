@@ -17,7 +17,7 @@ type Game struct {
 }
 
 var (
-	//go:embed icon.png
+	//go:embed main.png
 	IconBytes []byte
 
 	//go:embed font.ttf
@@ -37,6 +37,8 @@ var (
 
 	BGColor   = color.RGBA{139, 87, 42, 255}
 	GridColor = []color.RGBA{{12, 142, 223, 255}, {223, 12, 16, 255}, {223, 211, 12, 255}}
+
+	IconUpdate = false
 )
 
 func Check() int {
@@ -71,10 +73,15 @@ func (g *Game) Update() error {
 				CurrentPlayer = 1
 			}
 		}
+
+		if Winner == 0 {
+			IconUpdate = true
+		}
 	} else if ebiten.IsMouseButtonPressed(ebiten.MouseButtonRight) {
 		Winner = 0
 		Grid = [][]int{{0, 0, 0}, {0, 0, 0}, {0, 0, 0}}
 		CurrentPlayer = 1
+		IconUpdate = true
 	}
 	return nil
 }
@@ -96,6 +103,10 @@ func (g *Game) Draw(screen *ebiten.Image) {
 				opt.GeoM.Translate(float64(GridWidth+GridSpace), 0)
 			}
 		}
+	}
+	if IconUpdate {
+		ebiten.SetWindowIcon([]image.Image{ebiten.NewImageFromImage(screen)})
+		IconUpdate = false
 	}
 }
 
